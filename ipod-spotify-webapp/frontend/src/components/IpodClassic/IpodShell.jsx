@@ -1,76 +1,88 @@
-// --- IpodShell.jsx ---
-import React, { useState } from 'react'
-import IpodMenu from './IpodMenu'
-import IpodWheel from './IpodWheel'
-import './Ipod.css'
-import { initAudio } from './IpodAudio'
+import React, { useState, useEffect } from "react";
+import "./Ipod.css";
+import IpodMenu from "./IpodMenu";
+import IpodWheel from "./IpodWheel";
+import clickSound from "/sounds/select.mp3";
+import scrollSound from "/sounds/scroll.mp3";
+import backSound from "/sounds/back.mp3";
 
+const IpodShell = ({ playlists = [], onSelectPlaylist, onLogout, onRequestAuth }) => {
+  const [menuIndex, setMenuIndex] = useState(0);
+  const [menu, setMenu] = useState("main"); // "main" | "playlists" | "nowPlaying"
+  const [audio] = useState({
+    click: new Audio(clickSound),
+    scroll: new Audio(scrollSound),
+    back: new Audio(backSound),
+  });
 
-export default function IpodShell({ playlists = [], onSelectPlaylist = () => {}, onLogout = () => {}, onRequestAuth = () => {} }){
-const [screen, setScreen] = useState('menu') // menu | list | now
-const [listItems, setListItems] = useState([])
-const [title, setTitle] = useState('iPod Classic')
+  const mainMenu = ["Playlists", "Now Playing", "Logout"];
 
+  const handleScroll = (direction) => {
+    setMenuIndex((prev) => {
+      let next = direction === "up" ? prev - 1 : prev + 1;
+      const menuLength = menu === "main" ? mainMenu.length : playlists.length;
+      if (next < 0) next = menuLength - 1;
+      if (next >= menuLength) next = 0;
+      audio.scroll.play();
+      return next;
+    });
+  };
 
-// prepare sounds
-React.useEffect(()=>{ initAudio() }, [])
+  const handleSelect = () => {
+    audio.click.play();
 
+    if (menu === "main") {
+      const choice = mainMenu[menuIndex];
+      if (choice === "Playlists") setMenu("playlists");
+      else if (choice === "Now Playing") setMenu("nowPlaying");
+      else if (choice === "Logout" && onLogout) onLogout();
+    } else if (menu === "playlists") {
+      const selected = playlists[menuIndex];
+      if (onSelectPlaylist) onSelectPlaylist(selected);
+    }
+  };
 
-function openPlaylists(){
-setTitle('Playlists')
-setListItems(playlists)
-setScreen('list')
-}
+  const handleBack = () => {
+    if (menu !== "main") {
+      audio.back.play();
+      setMenu("main");
+      setMenuIndex(0);
+    }
+  };
 
+  return (
+    <div className="ipod-shell">
+      <div className="ipod-screen">
+        {menu === "main" && (
+          <IpodMenu title="Menu" items={mainMenu} selectedIndex={menuIndex} />
+        )}
+        {menu === "playlists" && (
+          <IpodMenu
+            title="Playlists"
+            items={playlists.map((p) => p.name)}
+            selectedIndex={menuIndex}
+          />
+        )}
+        {menu === "nowPlaying" && (
+          <div className="now-playing">
+            <p>No track currently playing</p>
+          </div>
+        )}
+      </div>
 
-function openNow(){ setTitle('Now Playing'); setScreen('now') }
+      <IpodWheel
+        onScroll={handleScroll}
+        onSelect={handleSelect}
+        onBack={handleBack}
+      />
 
+      {!playlists?.length && (
+        <button className="connect-btn" onClick={onRequestAuth}>
+          Connect Spotify
+        </button>
+      )}
+    </div>
+  );
+};
 
-function onMenuSelect(key){
-if(key === 'Playlists') openPlaylists()
-else if(key === 'Now Playing') openNow()
-else if(key === 'Settings') alert('Settings not implemented yet')
-}
-
-
-function onItemSelect(item){
-onSelectPlaylist(item)
-setTitle(item.name || 'Playlist')
-setScreen('now')
-}
-
-
-return (
-<div className="ipod-shell">
-<div className="ipod-screen">
-{ screen === 'menu' && <IpodMenu onSelect={onMenuSelect} title={title} /> }
-{ screen === 'list' && <div className="list-wrap"><div className="list-title">{title}</div>{listItems.length ? (
-<div className="list-items">
-{listItems.map((p,idx)=> (
-<div key={p.id||idx} className="list-item" onClick={()=>onItemSelect(p)}>
-<img src={(p.images && p.images[0] && p.images[0].url) || ''} alt="cover"/>
-<div className="li-meta"><div className="li-title">{p.name}</div><div className="li-sub small">{p.tracks ? p.tracks.total + ' tracks' : ''}</div></div>
-</div>
-))}
-</div>
-) : <div className="empty">No items</div> }</div> }
-
-
-{ screen === 'now' && <div className="now-wrap"><div className="now-cover-box"> {/* Placeholder - App can render now playing */}</div><div className="now-meta small">Select a playlist to view tracks</div></div> }
-
-
-{ !playlists || playlists.length === 0 ? <div className="connect-cta"><button onClick={onRequestAuth} className="connect-btn">Connect Spotify</button></div> : null }
-</div>
-
-
-<IpodWheel onMenuPress={()=>setScreen('menu')} onSelectPress={()=>{ /* center press action */ }} onBackPress={()=>setScreen('menu')} onNavigate={(dir)=>{
-// dir: 'up' | 'down' — bubble to menu or list components if needed
-}} />
-
-
-<div className="ipod-actions">
-<button className="text-btn" onClick={onLogout}>Logout</button>
-</div>
-</div>
-)
-}
+export default IpodShell;
