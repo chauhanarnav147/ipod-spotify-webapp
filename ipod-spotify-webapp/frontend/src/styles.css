@@ -1,1 +1,22 @@
-:root{--bg:#111;--shell:#1f2225}body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(#0b0b0b,#151515);height:100vh;display:flex;align-items:center;justify-content:center}.app-root{width:360px}.ipod{width:320px;height:520px;background:var(--shell);border-radius:28px;padding:20px;color:#fff;box-shadow:0 20px 60px rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center}.screen{width:260px;height:220px;background:#fff;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px}.carousel{width:260px;height:120px;position:relative;perspective:800px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}.cover{position:absolute;width:110px;height:110px;border-radius:8px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.2,.9,.2,1),z-index .1s}.cover img{width:100%;height:100%;object-fit:cover}.wheel{width:260px;height:120px;background:linear-gradient(#111,#0b0b0b);border-radius:14px;display:flex;align-items:center;justify-content:space-around}.btn{background:#222;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+:root{ --bg:#0b0b0b; --shell:#1f2225; --accent:#06d6a0 }
+html,body{height:100%}
+body{ margin:0; font-family:Inter, system-ui, sans-serif; background: linear-gradient(#070707, #111); height:100vh; display:flex; align-items:center; justify-content:center }
+.app-root { width:380px; padding:10px }
+.ipod{ width:360px; height:580px; background:var(--shell); border-radius:28px; padding:18px; color:#fff; box-shadow:0 30px 80px rgba(0,0,0,.7); display:flex; flex-direction:column; align-items:center }
+.screen{ width:300px; height:260px; background:#fff; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:12px; box-shadow: inset 0 -6px 18px rgba(0,0,0,.08) }
+.big-cover{ width:100%; height:100%; object-fit:cover; display:block }
+.big-cover.placeholder{ width:100%; height:100%; background:linear-gradient(180deg,#fff,#f3f3f3); border-radius:8px }
+
+.carousel{ width:320px; height:120px; position:relative; perspective:900px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; overflow:visible }
+.cover{ position:absolute; width:100px; height:100px; border-radius:8px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,.6); transition:transform .35s cubic-bezier(.2,.9,.2,1), z-index .1s, opacity .2s; cursor:pointer; background:#0f0f0f }
+.cover img{ width:100%; height:100%; object-fit:cover; display:block }
+.cover-text{ display:flex; align-items:center; justify-content:center; padding:8px; font-size:12px; color:#fff; background:#111; height:100%; text-align:center }
+
+.cover.active{ box-shadow:0 16px 40px rgba(0,0,0,.7); transform:translateY(-6px) scale(1.05) !important; border: 2px solid rgba(255,255,255,0.08) }
+
+.meta{ width:320px; min-height:20px; display:flex; align-items:center; justify-content:center; margin-bottom:10px }
+.track-title{ color:#e9eef3; font-size:14px; font-weight:600 }
+
+.wheel{ width:320px; height:120px; background:linear-gradient(#0f0f0f,#090909); border-radius:14px; display:flex; align-items:center; justify-content:center; margin-top:auto }
+.btn{ background:#1b1b1b; color:#fff; padding:10px 16px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); cursor:pointer; box-shadow: 0 6px 18px rgba(0,0,0,.6) }
+.placeholder{ color:#444; font-size:14px }
