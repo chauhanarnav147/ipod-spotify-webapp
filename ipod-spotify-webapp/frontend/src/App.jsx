@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import CoverFlow from './components/CoverFlow'
-const CLIENT_ID = 'YOUR_SPOTIFY_CLIENT_ID'
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
 const REDIRECT_URI = window.location.origin + '/callback'
 const SCOPES = ['user-read-private','user-read-email','user-library-read','user-read-playback-state','user-modify-playback-state','streaming']
 function App(){
